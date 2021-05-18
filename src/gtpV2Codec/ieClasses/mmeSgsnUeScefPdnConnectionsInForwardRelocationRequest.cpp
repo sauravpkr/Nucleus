@@ -17,7 +17,10 @@
 #include "gtpV2IeFactory.h"
 #include "apnIe.h"
 #include "ebiIe.h"
-#include "nodeIdentifierIe.h"
+#include "apnRestrictionIe.h"
+#include "selectionModeIe.h"
+#include "ambrIe.h"
+#include "chargingCharacteristicsIe.h"
 
 MmeSgsnUeScefPdnConnectionsInForwardRelocationRequest::
 MmeSgsnUeScefPdnConnectionsInForwardRelocationRequest()
@@ -29,8 +32,8 @@ MmeSgsnUeScefPdnConnectionsInForwardRelocationRequest()
     mandIe = EbiIeType;
     mandIe = (mandIe << 8) | 0; // defaultEpsBearerId
     mandatoryIeSet.insert(mandIe);
-    mandIe = NodeIdentifierIeType;
-    mandIe = (mandIe << 8) | 0; // scefId
+    mandIe = AmbrIeType;
+    mandIe = (mandIe << 8) | 0; // aggregateMaximumBitRate
     mandatoryIeSet.insert(mandIe);
 
 }
@@ -99,18 +102,72 @@ encodeMmeSgsnUeScefPdnConnectionsInForwardRelocationRequest(MsgBuffer &buffer,
         errorStream.add((char *)"Failed to encode IE: defaultEpsBearerId\n");
         return false;
     }
+    if (data.apnRestrictionIePresent)
+    {
+        
+        // Encode the Ie Header
+        header.ieType = ApnRestrictionIeType;
+        header.instance = 0;
+        header.length = 0; // We will encode the IE first and then update the length
+        GtpV2Ie::encodeGtpV2IeHeader(buffer, header);
+        startIndex = buffer.getCurrentIndex(); 
+        ApnRestrictionIe apnRestriction=
+        dynamic_cast<
+        ApnRestrictionIe&>(GtpV2IeFactory::getInstance().getIeObject(ApnRestrictionIeType));
+        rc = apnRestriction.encodeApnRestrictionIe(buffer, data.apnRestriction);
+        endIndex = buffer.getCurrentIndex();
+        length = endIndex - startIndex;
+        
+        // encode the length value now
+        buffer.goToIndex(startIndex - 3);
+        buffer.writeUint16(length, false);
+        buffer.goToIndex(endIndex);
+
+        if (!(rc))
+        {
+          errorStream.add((char *)"Failed to encode IE: apnRestriction\n");
+          return false;
+        }
+    }
+    if (data.selectionModeIePresent)
+    {
+        
+        // Encode the Ie Header
+        header.ieType = SelectionModeIeType;
+        header.instance = 0;
+        header.length = 0; // We will encode the IE first and then update the length
+        GtpV2Ie::encodeGtpV2IeHeader(buffer, header);
+        startIndex = buffer.getCurrentIndex(); 
+        SelectionModeIe selectionMode=
+        dynamic_cast<
+        SelectionModeIe&>(GtpV2IeFactory::getInstance().getIeObject(SelectionModeIeType));
+        rc = selectionMode.encodeSelectionModeIe(buffer, data.selectionMode);
+        endIndex = buffer.getCurrentIndex();
+        length = endIndex - startIndex;
+        
+        // encode the length value now
+        buffer.goToIndex(startIndex - 3);
+        buffer.writeUint16(length, false);
+        buffer.goToIndex(endIndex);
+
+        if (!(rc))
+        {
+          errorStream.add((char *)"Failed to encode IE: selectionMode\n");
+          return false;
+        }
+    }
 
     
     // Encode the Ie Header
-    header.ieType = NodeIdentifierIeType;
+    header.ieType = AmbrIeType;
     header.instance = 0;
     header.length = 0; // We will encode the IE first and then update the length
     GtpV2Ie::encodeGtpV2IeHeader(buffer, header);
     startIndex = buffer.getCurrentIndex(); 
-    NodeIdentifierIe scefId=
+    AmbrIe aggregateMaximumBitRate=
     dynamic_cast<
-    NodeIdentifierIe&>(GtpV2IeFactory::getInstance().getIeObject(NodeIdentifierIeType));
-    rc = scefId.encodeNodeIdentifierIe(buffer, data.scefId);
+    AmbrIe&>(GtpV2IeFactory::getInstance().getIeObject(AmbrIeType));
+    rc = aggregateMaximumBitRate.encodeAmbrIe(buffer, data.aggregateMaximumBitRate);
     endIndex = buffer.getCurrentIndex();
     length = endIndex - startIndex;
     
@@ -120,8 +177,35 @@ encodeMmeSgsnUeScefPdnConnectionsInForwardRelocationRequest(MsgBuffer &buffer,
     buffer.goToIndex(endIndex);
     if (!(rc))
     {
-        errorStream.add((char *)"Failed to encode IE: scefId\n");
+        errorStream.add((char *)"Failed to encode IE: aggregateMaximumBitRate\n");
         return false;
+    }
+    if (data.chargingCharacteristicsIePresent)
+    {
+        
+        // Encode the Ie Header
+        header.ieType = ChargingCharacteristicsIeType;
+        header.instance = 0;
+        header.length = 0; // We will encode the IE first and then update the length
+        GtpV2Ie::encodeGtpV2IeHeader(buffer, header);
+        startIndex = buffer.getCurrentIndex(); 
+        ChargingCharacteristicsIe chargingCharacteristics=
+        dynamic_cast<
+        ChargingCharacteristicsIe&>(GtpV2IeFactory::getInstance().getIeObject(ChargingCharacteristicsIeType));
+        rc = chargingCharacteristics.encodeChargingCharacteristicsIe(buffer, data.chargingCharacteristics);
+        endIndex = buffer.getCurrentIndex();
+        length = endIndex - startIndex;
+        
+        // encode the length value now
+        buffer.goToIndex(startIndex - 3);
+        buffer.writeUint16(length, false);
+        buffer.goToIndex(endIndex);
+
+        if (!(rc))
+        {
+          errorStream.add((char *)"Failed to encode IE: chargingCharacteristics\n");
+          return false;
+        }
     }
     return rc;
 }
@@ -216,26 +300,113 @@ decodeMmeSgsnUeScefPdnConnectionsInForwardRelocationRequest(MsgBuffer &buffer,
                 }
                 break;
             }
-            case NodeIdentifierIeType:
+            case ApnRestrictionIeType:
             {
-                NodeIdentifierIe ieObject =
+                ApnRestrictionIe ieObject =
                 dynamic_cast<
-                NodeIdentifierIe&>(GtpV2IeFactory::getInstance().
-                         getIeObject(NodeIdentifierIeType));
+                ApnRestrictionIe&>(GtpV2IeFactory::getInstance().
+                         getIeObject(ApnRestrictionIeType));
 
                 if(ieHeader.instance == 0)
                 {
 
-                    rc = ieObject.decodeNodeIdentifierIe(buffer, data.scefId, ieHeader.length);
+                    rc = ieObject.decodeApnRestrictionIe(buffer, data.apnRestriction, ieHeader.length);
+
+                    data.apnRestrictionIePresent = true;
+                    if (!(rc))
+                    {
+                        errorStream.add((char *)"Failed to decode IE: apnRestriction\n");
+                        return false;
+                    }
+                }
+                else
+                {
+                    // Unknown IE instance print error TODO
+                    errorStream.add((char *)"Unknown IE Type: ");
+                    errorStream.add(ieHeader.ieType);
+                    errorStream.endOfLine();
+                    buffer.skipBytes(ieHeader.length);
+                }
+                break;
+            }
+            case SelectionModeIeType:
+            {
+                SelectionModeIe ieObject =
+                dynamic_cast<
+                SelectionModeIe&>(GtpV2IeFactory::getInstance().
+                         getIeObject(SelectionModeIeType));
+
+                if(ieHeader.instance == 0)
+                {
+
+                    rc = ieObject.decodeSelectionModeIe(buffer, data.selectionMode, ieHeader.length);
+
+                    data.selectionModeIePresent = true;
+                    if (!(rc))
+                    {
+                        errorStream.add((char *)"Failed to decode IE: selectionMode\n");
+                        return false;
+                    }
+                }
+                else
+                {
+                    // Unknown IE instance print error TODO
+                    errorStream.add((char *)"Unknown IE Type: ");
+                    errorStream.add(ieHeader.ieType);
+                    errorStream.endOfLine();
+                    buffer.skipBytes(ieHeader.length);
+                }
+                break;
+            }
+            case AmbrIeType:
+            {
+                AmbrIe ieObject =
+                dynamic_cast<
+                AmbrIe&>(GtpV2IeFactory::getInstance().
+                         getIeObject(AmbrIeType));
+
+                if(ieHeader.instance == 0)
+                {
+
+                    rc = ieObject.decodeAmbrIe(buffer, data.aggregateMaximumBitRate, ieHeader.length);
 
                     if (!(rc))
                     {
-                        errorStream.add((char *)"Failed to decode IE: scefId\n");
+                        errorStream.add((char *)"Failed to decode IE: aggregateMaximumBitRate\n");
                         return false;
                     }
-                    Uint16 mandIe = NodeIdentifierIeType;
+                    Uint16 mandIe = AmbrIeType;
                     mandIe = (mandIe << 8) | 0;
                     mandatoryIeLocalList.erase(mandIe);
+                }
+                else
+                {
+                    // Unknown IE instance print error TODO
+                    errorStream.add((char *)"Unknown IE Type: ");
+                    errorStream.add(ieHeader.ieType);
+                    errorStream.endOfLine();
+                    buffer.skipBytes(ieHeader.length);
+                }
+                break;
+            }
+            case ChargingCharacteristicsIeType:
+            {
+                ChargingCharacteristicsIe ieObject =
+                dynamic_cast<
+                ChargingCharacteristicsIe&>(GtpV2IeFactory::getInstance().
+                         getIeObject(ChargingCharacteristicsIeType));
+
+                if(ieHeader.instance == 0)
+                {
+
+                    rc = ieObject.decodeChargingCharacteristicsIe(buffer, data.chargingCharacteristics, ieHeader.length);
+
+                    data.chargingCharacteristicsIePresent = true;
+                    if (!(rc))
+                    {
+                        errorStream.add((char *)"Failed to decode IE: chargingCharacteristics\n");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -303,14 +474,44 @@ displayMmeSgsnUeScefPdnConnectionsInForwardRelocationRequestData_v
     EbiIe&>(GtpV2IeFactory::getInstance().getIeObject(EbiIeType));
     defaultEpsBearerId.displayEbiIe_v(data.defaultEpsBearerId, stream);
 
-    stream.add((char *)"scefId:");
+    if (data.apnRestrictionIePresent)
+    {
+        stream.add((char *)"apnRestriction:");
+        stream.endOfLine();
+        ApnRestrictionIe apnRestriction=
+        dynamic_cast<
+        ApnRestrictionIe&>(GtpV2IeFactory::getInstance().getIeObject(ApnRestrictionIeType));
+        apnRestriction.displayApnRestrictionIe_v(data.apnRestriction, stream);
+
+	}
+     if (data.selectionModeIePresent)
+    {
+        stream.add((char *)"selectionMode:");
+        stream.endOfLine();
+        SelectionModeIe selectionMode=
+        dynamic_cast<
+        SelectionModeIe&>(GtpV2IeFactory::getInstance().getIeObject(SelectionModeIeType));
+        selectionMode.displaySelectionModeIe_v(data.selectionMode, stream);
+
+	}
+     stream.add((char *)"aggregateMaximumBitRate:");
     stream.endOfLine();
-    NodeIdentifierIe scefId=
+    AmbrIe aggregateMaximumBitRate=
     dynamic_cast<
-    NodeIdentifierIe&>(GtpV2IeFactory::getInstance().getIeObject(NodeIdentifierIeType));
-    scefId.displayNodeIdentifierIe_v(data.scefId, stream);
+    AmbrIe&>(GtpV2IeFactory::getInstance().getIeObject(AmbrIeType));
+    aggregateMaximumBitRate.displayAmbrIe_v(data.aggregateMaximumBitRate, stream);
 
+    if (data.chargingCharacteristicsIePresent)
+    {
+        stream.add((char *)"chargingCharacteristics:");
+        stream.endOfLine();
+        ChargingCharacteristicsIe chargingCharacteristics=
+        dynamic_cast<
+        ChargingCharacteristicsIe&>(GtpV2IeFactory::getInstance().getIeObject(ChargingCharacteristicsIeType));
+        chargingCharacteristics.displayChargingCharacteristicsIe_v(data.chargingCharacteristics, stream);
 
+	}
+ 
     stream.decrIndent();
     stream.decrIndent();
 }

@@ -138,12 +138,74 @@ forward_relocation_processing(struct FR_Q_msg * g_frReqInfo)
 					msgData.imsi.imsiValue.digits,
 					BINARY_IMSI_LEN);
 
-	printf("************IMSI value= %d************\n", msgData.imsi.imsiValue.digits);
+	printf("************IMSI value= %s************\n", msgData.imsi.imsiValue.digits);
 
 	msgData.imsi.imsiValue.length = imsi_len;
 	log_msg(LOG_INFO, "IMSI Len: %d", imsi_len);
 
 	msgData.indicationFlagsIePresent = true;
+
+	// Sender's FTEID for Control Plane
+	msgData.senderFTeidForControlPlane.ipv4present = true;
+	msgData.senderFTeidForControlPlane.interfaceType = 12; //12: S10 MME GTP-C interface
+	msgData.senderFTeidForControlPlane.ipV4Address.ipValue = g_s10_cfg.target_mme_ip;
+	msgData.senderFTeidForControlPlane.teidGreKey = g_frReqInfo->ue_idx;
+
+//Target Identification
+	//msgData.targetIdentification.targetId =   ; //refer pn 323
+	msgData.targetIdentification.targetType = 1; //Macro eNodeB ID : from 3gpp 129.274 v15 PN 321 :reference from logs
+
+
+//F-container
+	msgData.eUtranTransparentContainer.containerType = 3; //E-Utran Transparent ccontaainer: pn:319
+	msgData.eUtranTransparentContainer.fContainerField = 0 ; //Coming from s1-ap pn :319
+
+
+//MM Context
+	msgData.mmeSgsnAmfUeMmContext.securityMode = 4; //EPS Security Context and Quadruplets ,PN 314
+	msgData.mmeSgsnAmfUeMmContext.nhiPresent = 1 ;
+	msgData.mmeSgsnAmfUeMmContext.drxiPresent = 1 ;
+	msgData.mmeSgsnAmfUeMmContext.ksiAsme =0 ;
+	msgData.mmeSgsnAmfUeMmContext.numberOfQuintuplets = 0;
+	msgData.mmeSgsnAmfUeMmContext.numberOfQuadruplet = 1;
+	msgData.mmeSgsnAmfUeMmContext.uambriPresent = 1;
+	msgData.mmeSgsnAmfUeMmContext.osciPresent = 0 ;
+	msgData.mmeSgsnAmfUeMmContext.sambriPresent = 1;
+	msgData.mmeSgsnAmfUeMmContext.usedNasIntegrity = 1 ; //3gpp 129.274 v15 Table 8.38-4
+	msgData.mmeSgsnAmfUeMmContext.usedNasCipher = 0;
+	msgData.mmeSgsnAmfUeMmContext.nasDownlinkCount = 5;
+	msgData.mmeSgsnAmfUeMmContext.nasUplinkCount = 4 ;
+	//msgData.mmeSgsnAmfUeMmContext.kAsme = ; //will get it from MME-app
+
+	//Authentication Quadruplet
+	msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.count = 1 ;
+	//msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values.rand =
+	msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values[1].xresLength = 8;
+	//msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values.xres =
+	msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values[3].autnLength = 16;
+	//msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values.autn =
+	//msgData.mmeSgsnAmfUeMmContext.authenticationQuadruplet.values.kAsme =
+
+
+	msgData.mmeSgsnAmfUeMmContext.drxiPresent = 0;
+	//msgData.mmeSgsnAmfUeMmContext.nh =
+	//msgData.mmeSgsnAmfUeMmContext.uplinkSubscribedUeAmbr = ;
+	//msgData.mmeSgsnAmfUeMmContext.downlinkSubscribedUeAmbr = ;
+	//msgData.mmeSgsnAmfUeMmContext.uplinkUsedUeAmbr = 5071;
+	//msgData.mmeSgsnAmfUeMmContext.downlinkUsedUeAmbr = 5071 ;
+
+	//PDN Connection
+	msgData.mmeSgsnUeScefPdnConnections.defaultEpsBearerId.epsBearerId = 5 ; //TS 124 007 V10.0.0
+	//msgData.mmeSgsnUeScefPdnConnections.apn.apnValue =                     ; //3GPP TS 23.003 9.1 subclause
+	msgData.mmeSgsnUeScefPdnConnections.apnRestriction.restrictionValue = 1 ; // 3gpp 129.274 v15 Table 8.57-1
+	msgData.mmeSgsnUeScefPdnConnections.selectionMode.selectionMode = 0; // 3gpp 129.274 v15 Table 8.58-1:(MS or network provided APN, subscription verified)
+	msgData.mmeSgsnUeScefPdnConnections.aggregateMaximumBitRate.maxMbrDownlink = 1024 ;//3GPP TS 24.301 Figure 9.9.4.2.
+	msgData.mmeSgsnUeScefPdnConnections.aggregateMaximumBitRate.maxMbrUplink = 1024;
+	//3GPP TS 32.251--charging characteristics
+	//msgData.mmeSgsnUeScefPdnConnections.chargingCharacteristics.value =
+
+
+
 
 #if 0
 	msgData.msisdnIePresent = true;

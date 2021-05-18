@@ -611,10 +611,16 @@ typedef struct
 
 typedef struct
 {
+    bool apnRestrictionIePresent;    
+    bool selectionModeIePresent;    
+    bool chargingCharacteristicsIePresent;    
 
     ApnIeData apn;    
     EbiIeData defaultEpsBearerId;    
-    NodeIdentifierIeData scefId;    
+    ApnRestrictionIeData apnRestriction;    
+    SelectionModeIeData selectionMode;    
+    AmbrIeData aggregateMaximumBitRate;    
+    ChargingCharacteristicsIeData chargingCharacteristics;    
 }MmeSgsnUeScefPdnConnectionsInForwardRelocationRequestData;
 
 

@@ -32,6 +32,8 @@ typedef struct s1ap_config
 	struct PLMN mme_plmn_id;
 	uint16_t num_plmns;
 	struct PLMN plmns[MAX_PLMN];
+	uint16_t num_tacs;
+	unsigned short tacs[MAX_TAC];
 	struct PLMN_C plmn_mcc_mnc[MAX_PLMN];
 } s1ap_config_t;
 

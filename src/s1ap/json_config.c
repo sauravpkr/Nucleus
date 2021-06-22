@@ -117,6 +117,22 @@ parse_s1ap_conf(s1ap_config_t *config)
 		count++;
 	}
 	config->num_plmns = count - 1;
+
+	count=1;
+	while(1){
+		char name[100]={'\0'};
+		sprintf(name,"%s%d","mme.taclist.tac",count);
+		unsigned short tac=get_int_scalar(name);
+		if(-1 == tac) {
+			// over
+			break;
+			}
+			config->tacs[count-1]=tac;
+			log_msg(LOG_INFO,"Configured tac%d:  %d",count,config->tacs[count-1]);
+			count++;
+
+	}
+	config->num_tacs=count-1;
 	log_msg(LOG_ERROR,"Config parsing success ");
 	return SUCCESS;
 }

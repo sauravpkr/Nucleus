@@ -646,7 +646,8 @@ ActStatus ActionHandlers::default_s1_ho_handler(ControlBlock& cb)
     ////////////////////////////////////in case the format is different than config, formats1ap plmn id is called
     MmeCommonUtils::formatS1apPlmnId(const_cast<PLMN*>(&hoReq->target_id.selected_tai.plmn_id));
     // check if target tai is served by same mme
-    if (MmeCommonUtils::isLocalTAI(&hoReq->target_id.selected_tai.plmn_id, hoReq->target_id.selected_tai.tac ))
+    //if (MmeCommonUtils::isLocalTAI(&hoReq->target_id.selected_tai.plmn_id, hoReq->target_id.selected_tai.tac ))
+    if(hoReqProc_p->getTargetEnbContextId()!=INT_MAX)
     {
         // can add check for enodeb also
         log_msg(LOG_DEBUG,"Target TAI is served by current mme ");

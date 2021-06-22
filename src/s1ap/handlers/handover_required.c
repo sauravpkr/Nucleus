@@ -15,7 +15,7 @@
 #include "s1ap_msg_codes.h"
 #include "s1apContextManager/s1apContextWrapper_c.h"
 #include "msgType.h"
-
+int IsHomeTac(unsigned short *tacs,short target);
 extern ipc_handle ipc_S1ap_Hndl;
 
 void dumpHoRequired(handover_required_Q_msg_t *msg)
@@ -36,12 +36,22 @@ void dumpHoRequired(handover_required_Q_msg_t *msg)
      }
      log_msg(LOG_INFO, "Container is  %s ", container);*/
 }
+int IsHomeTac(unsigned short *tacs,short target){
+while(*tacs!=0){
+    if(*tacs==target)
+    return 1;
+    tacs++;
+}
+fprintf(stderr,"Received Target TAC is not home tac : %d\n",target);
+return 0;
+}
 
 int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
 {
     handover_required_Q_msg_t ho_required = {0};
     struct proto_IE ho_required_ies = {0};
     int enb_id = 0;
+    unsigned short target_tac=0;
     log_msg(LOG_INFO, "Parse s1ap handover required message");
 
     int decode_status = convertUehoReqToProtoIe(msg, &ho_required_ies);
@@ -103,7 +113,7 @@ int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
                     sizeof(struct targetId));
 
             char *enb_id_buf = ho_required_ies.data[i].val.target_id.global_enb_id.macro_enb_id;
-
+            target_tac=ho_required_ies.data[i].val.target_id.selected_tai.tac;
             uint32_t val = enb_id_buf[0];
             enb_id |= val << 12;
             val = enb_id_buf[1];
@@ -143,7 +153,7 @@ int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
 
         return E_FAIL;
     }
-
+    if(IsHomeTac(get_s1ap_config()->tacs,target_tac)){
     uint32_t cbIndex = findControlBlockWithEnbId(enb_id);
     if (cbIndex == INVALID_CB_INDEX)
     {
@@ -155,8 +165,9 @@ int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
         return E_FAIL;
     }
     ho_required.target_enb_context_id = cbIndex;
-    log_msg(LOG_INFO, "target eNB context Id %u", cbIndex);
-    cbIndex = findControlBlockWithEnbFd(enb_fd);
+    log_msg(LOG_INFO, "target eNB context Id %u", cbIndex);}
+    else ho_required.target_enb_context_id=INT_MAX;
+      uint32_t cbIndex = findControlBlockWithEnbFd(enb_fd);
     if (cbIndex == INVALID_CB_INDEX)
     {
 	    log_msg(LOG_ERROR, "No CB found for enb fd %d.", enb_fd);

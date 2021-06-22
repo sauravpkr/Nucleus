@@ -6,4 +6,5 @@
 
 #ifndef __DEFINES__
 #define MAX_PLMN 10
+#define MAX_TAC 10
 #endif 

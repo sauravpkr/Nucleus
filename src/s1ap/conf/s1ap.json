@@ -18,7 +18,10 @@
         "plmnlist": { 
 			"plmn1": "mcc=315,mnc=010",
 			"plmn2": "mcc=208,mnc=01"
-        }
+        },
+		"taclist" :{
+				"tac1" : "12345"
+		}
 	},
 	"s1ap": {
 		"s1ap_local_addr": "192.168.1.55",

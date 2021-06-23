@@ -60,7 +60,10 @@ COPY --from=builder /tmp/prometheus/_build/deploy/usr/local/lib /usr/local/lib
 
 WORKDIR /openmme/target
 COPY --from=builder /openmme/target .
-
+RUN apt-get update
+RUN apt-get install -y vim
+RUN apt-get install -y net-tools
+RUN apt-get install -y gdb
 ARG org_label_schema_version=unknown
 ARG org_label_schema_vcs_url=unknown
 ARG org_label_schema_vcs_ref=unknown
@@ -74,3 +77,7 @@ LABEL org.label-schema.schema-version=1.0 \
       org.label-schema.vcs-ref=$org_label_schema_vcs_ref \
       org.label-schema.build-date=$org_label_schema_build_date \
       org.opencord.vcs-commit-date=$org_opencord_vcs_commit_date
+
+EXPOSE 36412/sctp
+
+EXPOSE 2123/udp

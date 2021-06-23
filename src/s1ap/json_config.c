@@ -122,13 +122,15 @@ parse_s1ap_conf(s1ap_config_t *config)
 	while(1){
 		char name[100]={'\0'};
 		sprintf(name,"%s%d","mme.taclist.tac",count);
-		unsigned short tac=get_int_scalar(name);
+		unsigned int tac=get_int_scalar(name);
 		if(-1 == tac) {
 			// over
 			break;
 			}
+			fprintf(stderr,"%d",tac);
 			config->tacs[count-1]=tac;
 			log_msg(LOG_INFO,"Configured tac%d:  %d",count,config->tacs[count-1]);
+			fprintf(stderr,"Configured tac%d:  %d",count,config->tacs[count-1]);
 			count++;
 
 	}

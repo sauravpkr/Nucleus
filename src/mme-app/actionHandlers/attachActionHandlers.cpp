@@ -424,7 +424,7 @@ ActStatus ActionHandlers::auth_response_validate(SM::ControlBlock& cb)
                 " (%lu) with xres (%lu). Length %d", res, 
                 xres, auth_resp->res.len);
 
-        if(memcmp((ue_ctxt->getAiaSecInfo().AiaSecInfo_mp->xres.val),
+        /*if(memcmp((ue_ctxt->getAiaSecInfo().AiaSecInfo_mp->xres.val),
                   (auth_resp->res.val),
                   auth_resp->res.len) != 0) {
             log_msg(LOG_ERROR, "Invalid Auth response Comparing received result "
@@ -432,7 +432,7 @@ ActStatus ActionHandlers::auth_response_validate(SM::ControlBlock& cb)
                     res, xres, auth_resp->res.len);
             procedure_p->setMmeErrorCause(MME_AUTH_VALIDATION_FAILURE);
             return ActStatus::ABORT;
-        }
+        }*/
 
         ProcedureStats::num_of_processed_auth_response++;
         SM::Event evt(AUTH_RESP_SUCCESS, NULL);

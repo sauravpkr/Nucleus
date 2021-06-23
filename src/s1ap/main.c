@@ -38,8 +38,8 @@
 #include "s1apContextManager/s1apContextWrapper_c.h"
 #include "s1_common_types.h"
 
-s1ap_instance_t *s1ap_inst;
 
+s1ap_instance_t *s1ap_inst;
 /*Global and externs **/
 pthread_t s1ap_iam_t;
 
@@ -311,7 +311,7 @@ void * tipc_msg_handler()
 int
 init_sctp()
 {
-	s1ap_config_t *s1ap_cfg = get_s1ap_config();
+	 s1ap_config_t *s1ap_cfg = get_s1ap_config();
 	
 	log_msg(LOG_INFO, "Create sctp sock, ip:%d, port:%d",
 			s1ap_cfg->s1ap_local_ip, s1ap_cfg->sctp_port);

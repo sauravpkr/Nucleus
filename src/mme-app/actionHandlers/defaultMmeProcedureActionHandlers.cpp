@@ -667,11 +667,11 @@ ActStatus ActionHandlers::default_s1_ho_handler(ControlBlock& cb)
 
         MmeCommonUtils::select_neighboring_mme(&hoReq->target_id.selected_tai, &neigh_mme_ip_addr);
 
-        if (neigh_mme_ip_addr == NULL)
+        /*if (neigh_mme_ip_addr == NULL)
         {
             // failure case need to handle ()HO_FAILURE_FROM_TARGET_ENB
         }
-        else
+        else*/
         {
             hoReqProc_p->setHoType(interMmeS1Ho_c);
             // need to add ip for mme in handover context

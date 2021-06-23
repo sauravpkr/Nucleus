@@ -15,6 +15,8 @@
 #include "s1ap_msg_codes.h"
 #include "s1apContextManager/s1apContextWrapper_c.h"
 #include "msgType.h"
+
+extern s1ap_instance_t *s1ap_inst;
 int IsHomeTac(unsigned short *tacs,short target);
 extern ipc_handle ipc_S1ap_Hndl;
 
@@ -114,6 +116,7 @@ int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
 
             char *enb_id_buf = ho_required_ies.data[i].val.target_id.global_enb_id.macro_enb_id;
             target_tac=ho_required_ies.data[i].val.target_id.selected_tai.tac;
+            fprintf(stderr,"%d----------target tac",target_tac);
             uint32_t val = enb_id_buf[0];
             enb_id |= val << 12;
             val = enb_id_buf[1];
@@ -153,7 +156,7 @@ int s1_handover_required_handler(InitiatingMessage_t *msg, int enb_fd)
 
         return E_FAIL;
     }
-    if(IsHomeTac(get_s1ap_config()->tacs,target_tac)){
+    if(IsHomeTac(s1ap_inst->s1ap_config->tacs,target_tac)){
     uint32_t cbIndex = findControlBlockWithEnbId(enb_id);
     if (cbIndex == INVALID_CB_INDEX)
     {

@@ -1019,12 +1019,14 @@ int convertUehoReqToProtoIe(InitiatingMessage_t *msg,
                         log_msg (LOG_ERROR, "Decoding of IE TAI failed");
                         return -1;
                     }
-
+                    short tc;
                     memcpy(&proto_ies->data[i].val.target_id.selected_tai.tac,
                             s1apTAI_p->tAC.buf, s1apTAI_p->tAC.size);
+                    memcpy(&tc,s1apTAI_p->tAC.buf, s1apTAI_p->tAC.size);
+                    fprintf(stderr,"\n recieved tac %s\n",s1apTAI_p->tAC.buf);
                     memcpy(proto_ies->data[i].val.target_id.selected_tai.plmn_id.idx,
                             s1apTAI_p->pLMNidentity.buf, s1apTAI_p->pLMNidentity.size);
-
+                    fprintf(stderr,"\ndecoded tac %d\n",tc);
                     if (targeteNB_ID->global_ENB_ID.eNB_ID.present == ENB_ID_PR_macroENB_ID)
                     {
                         memcpy(proto_ies->data[i].val.target_id.global_enb_id.macro_enb_id,

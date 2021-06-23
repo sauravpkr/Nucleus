@@ -722,7 +722,7 @@ struct forward_relocation_req_Q_msg {
     uint32_t sgw_ip;
     uint32_t pgw_ip;
     mm_context_t mm_cntxt;
-    uint32_t neigh_mme_ip;
+    
     uint32_t target_mme_ip;
 };
 #define S10_FORWARD_RELOCATION_REQ_BUF_SIZE sizeof(struct forward_relocation_req_Q_msg)

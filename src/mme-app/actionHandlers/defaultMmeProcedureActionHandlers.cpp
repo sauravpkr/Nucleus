@@ -665,23 +665,23 @@ ActStatus ActionHandlers::default_s1_ho_handler(ControlBlock& cb)
         log_msg(LOG_DEBUG,"Target TAI is NOT served by current mme, Checking for neighboring MME ");
         int neigh_mme_ip_addr = 0;
 
-        MmeCommonUtils::select_neighboring_mme(&hoReq->target_id.selected_tai, &neigh_mme_ip_addr);
+       // MmeCommonUtils::select_neighboring_mme(&hoReq->target_id.selected_tai, &neigh_mme_ip_addr);
 
         /*if (neigh_mme_ip_addr == NULL)
         {
             // failure case need to handle ()HO_FAILURE_FROM_TARGET_ENB
         }
         else*/
-        {
+        
             hoReqProc_p->setHoType(interMmeS1Ho_c);
             // need to add ip for mme in handover context
             // macro_enb_id can be added to the context to pass it to the
             ProcedureStats::num_of_ho_required_received++;
-
+            fprintf(stderr,"\n starting s1 inter ho \n");
             SM::Event evt(INTER_S1HO_START, NULL);
             cb.qInternalEvent(evt);
             return ActStatus::PROCEED;
-        }
+        
     }
 #endif
 }

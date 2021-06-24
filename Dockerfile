@@ -30,18 +30,14 @@ RUN make -C src/stateMachineFwk
 RUN make -C src/mmeGrpcProtos
 RUN make -C src/mmeGrpcClient
 RUN make -C src/cmn
-COPY include/s11 ./include/s11
+COPY include/gtpv2c ./include/gtpv2c
 COPY include/s6a ./include/s6a
 COPY include/s1ap ./include/s1ap
-COPY include/s10 ./include/s10
-COPY src/s11 ./src/s11
-RUN make -C src/s11/cpp_utils --debug
-RUN make -C src/s11
+COPY src/gtpv2c ./src/gtpv2c
+RUN make -C src/gtpv2c/cpp_utils --debug
+RUN make -C src/gtpv2c
 COPY src/s6a ./src/s6a
 RUN make -C src/s6a
-COPY src/s10 ./src/s10
-RUN make -C src/s10/cpp_utils --debug
-RUN make -C src/s10
 COPY src/mme-app ./src/mme-app
 RUN make -C src/mme-app
 COPY src/s1ap ./src/s1ap
@@ -60,10 +56,7 @@ COPY --from=builder /tmp/prometheus/_build/deploy/usr/local/lib /usr/local/lib
 
 WORKDIR /openmme/target
 COPY --from=builder /openmme/target .
-RUN apt-get update
-RUN apt-get install -y vim
-RUN apt-get install -y net-tools
-RUN apt-get install -y gdb
+
 ARG org_label_schema_version=unknown
 ARG org_label_schema_vcs_url=unknown
 ARG org_label_schema_vcs_ref=unknown
@@ -78,6 +71,4 @@ LABEL org.label-schema.schema-version=1.0 \
       org.label-schema.build-date=$org_label_schema_build_date \
       org.opencord.vcs-commit-date=$org_opencord_vcs_commit_date
 
-EXPOSE 36412/sctp
 
-EXPOSE 2123/udp

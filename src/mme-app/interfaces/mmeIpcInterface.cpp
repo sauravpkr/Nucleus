@@ -14,6 +14,7 @@
 #include <mme_app.h>
 #include <msgHandlers/gtpMsgHandler.h>
 #include <msgHandlers/s1MsgHandler.h>
+#include <msgHandlers/s10MsgHandler.h>
 #include <msgHandlers/s6MsgHandler.h>
 
 extern "C" {
@@ -107,6 +108,9 @@ void MmeIpcInterface::handleIpcMsg(cmn::IpcEMsgUnqPtr eMsg)
 		break;
 	case TipcInstanceTypes::s11AppInstanceNum_c:
 		GtpMsgHandler::Instance()->handleGtpMessage_v(std::move(eMsg));
+		break;
+	case TipcInstanceTypes::s10AppInstanceNum_c:
+		S10MsgHandler::Instance()->handleS10Message_v(std::move(eMsg));
 		break;
 	case TipcInstanceTypes::s6AppInstanceNum_c:
 		S6MsgHandler::Instance()->handleS6Message_v(std::move(eMsg));

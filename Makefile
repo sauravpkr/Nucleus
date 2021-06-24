@@ -20,10 +20,8 @@ SUBDIRS 		 := src/cmn \
 					src/mme-app \
 					src/s1ap/s1apContextManager \
 					src/s1ap \
-					src/s11/cpp_utils/ \
-					src/s11 \
-					src/s10/cpp_utils/ \
-					src/s10 \
+					src/gtpv2c/cpp_utils/ \
+					src/gtpv2c \
 					src/s6a
 
 #$(wildcard src/mme-app/.)

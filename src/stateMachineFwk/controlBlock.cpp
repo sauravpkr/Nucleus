@@ -130,10 +130,14 @@ namespace SM
 
     void ControlBlock::qInternalEvent(Event &event)
     {
+        fprintf(stderr,"\n inside qinternalEvent 1 \n");
         if (cbState_m == ALLOCATED)
         {
+            fprintf(stderr,"\n inside qinternalEvent 2\n");
             internalEventQ.push(event);
+            fprintf(stderr,"\n inside qinternalEvent 4\n");
         }
+        fprintf(stderr,"\n inside qinternalEvent 3\n");
     }
 
 	PermDataBlock* ControlBlock::getFastAccessBlock(unsigned short idx) const

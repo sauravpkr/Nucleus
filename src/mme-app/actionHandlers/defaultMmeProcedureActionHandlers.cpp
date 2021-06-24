@@ -679,6 +679,7 @@ ActStatus ActionHandlers::default_s1_ho_handler(ControlBlock& cb)
             ProcedureStats::num_of_ho_required_received++;
             fprintf(stderr,"\n starting s1 inter ho \n");
             SM::Event evt(INTER_S1HO_START, NULL);
+            fprintf(stderr,"\n after starting s1 inter ho \n");
             cb.qInternalEvent(evt);
             return ActStatus::PROCEED;
         
